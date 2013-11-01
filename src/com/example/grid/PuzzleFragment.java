@@ -20,14 +20,14 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 public class PuzzleFragment extends Fragment {
-	private int columnas = 3;
-	private int filas = 3;
+	private int columnas = 4;
+	private int filas = 4;
 	private int pedazos = columnas * filas;
 	private GridView gridview;
 	private ImageAdapter adapter;
 	int[] mapeadorTablero = new int[pedazos];
-	private TextView texto;
 	int espacioVacio;
+	boolean trabarBotones = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,7 +47,6 @@ public class PuzzleFragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 		gridview = (GridView) getActivity().findViewById(R.id.gridView1);
-		texto = (TextView) getActivity().findViewById(R.id.text1);
 		Bitmap cover = BitmapFactory.decodeResource(getResources(),
 				R.drawable.cover);
 		adapter = new ImageAdapter(getActivity(), cover, filas, columnas,
@@ -55,43 +54,12 @@ public class PuzzleFragment extends Fragment {
 		gridview.setVerticalScrollBarEnabled(false);
 		gridview.setNumColumns(columnas);
 		gridview.setAdapter(adapter);
-
-		gridview.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
-				if (position != espacioVacio && detectarEspacioVacio(position)) {
-					intercambiar(position);
-					gridview.invalidateViews();
-				}
-				if (ganasteElJuego())
-					new FireMissilesDialogFragment().show(getFragmentManager(),
-							getTag());
-			}
-
-			private boolean ganasteElJuego() {
-				for (int i = 0; i < mapeadorTablero.length; i++) {
-					if (mapeadorTablero[i] != i)
-						return false;
-				}
-				return true;
-			}
-
-			private void intercambiar(int pos) {
-				int vacio = mapeadorTablero[espacioVacio];
-				mapeadorTablero[espacioVacio] = mapeadorTablero[pos];
-				espacioVacio = pos;
-				mapeadorTablero[pos] = vacio;
-			}
-
-			private boolean detectarEspacioVacio(int position) {
-				return true;
-			}
-		});
 		gridview.setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == event.ACTION_MOVE) {
+				if (event.getAction() == event.ACTION_MOVE && !trabarBotones) {
+					trabarBotones = true;
 					int action = event.getActionMasked();
 					float currentXPosition = event.getX();
 					float currentYPosition = event.getY();
@@ -106,6 +74,8 @@ public class PuzzleFragment extends Fragment {
 						new FireMissilesDialogFragment().show(
 								getFragmentManager(), getTag());
 				}
+				if (event.getAction() == event.ACTION_UP)
+					trabarBotones = false;
 				return false;
 			}
 
@@ -125,7 +95,17 @@ public class PuzzleFragment extends Fragment {
 			}
 
 			private boolean detectarEspacioVacio(int position) {
-				return true;
+				//detectar Izquierda
+				if(position%filas!=0&&position-1==espacioVacio)
+					return true;
+			
+				//detectar Derecha
+				if(position%filas!=filas-1&&position+1==espacioVacio)
+					return true;
+				//detectar Arriba
+				if(position+filas==espacioVacio||position-filas==espacioVacio)
+					return true;
+				return false;
 			}
 		});
 	}
