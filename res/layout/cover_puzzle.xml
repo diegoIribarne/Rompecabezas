@@ -1,0 +1,25 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:text="@string/hello_world" />
+
+    <GridView
+        android:id="@+id/gridView1"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:numColumns="3"
+        
+        android:horizontalSpacing="1dp"
+        android:verticalSpacing="1dp"
+        android:background="#FFFF1F">
+    </GridView>
+
+</RelativeLayout>
